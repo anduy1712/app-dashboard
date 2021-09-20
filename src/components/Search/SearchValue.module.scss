@@ -1,0 +1,14 @@
+@import '../../assets/scss/mixins';
+.search {
+  margin: 20px 0;
+  background: white !important;
+  border-radius: 8px;
+  padding: 14px;
+  :global {
+    @include tablet {
+      .gutter-row {
+        margin-bottom: 12px !important;
+      }
+    }
+  }
+}

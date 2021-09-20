@@ -1,0 +1,47 @@
+* {
+  margin: 0;
+}
+ul {
+  padding: 0;
+  list-style: none;
+}
+img {
+  max-width: 100%;
+}
+
+.theme-light {
+  $color-blue: #00cfe8;
+  $color-indigo: #6610f2;
+  $color-purple: #7367f0;
+  $color-pink: #e83e8c;
+  $color-red: #ea5455;
+  $color-orange: #ff9f43;
+  $color-yellow: #ffc107;
+  $color-green: #28c76f;
+  $color-teal: #20c997;
+  $color-cyan: #17a2b8;
+  $color-white: #fff;
+  $color-gray: #b8c2cc;
+  $color-gray-dark: #1e1e1e;
+  $color-primary: #7367f0;
+  $color-secondary: #82868b;
+  $color-success: #28c76f;
+  $color-info: #00cfe8;
+  $color-warning: #ff9f43;
+  $color-danger: #ea5455;
+  $color-light: #f6f6f6;
+  $color-dark: #4b4b4b;
+}
+
+/* --light-text is fine on on the first 3, --dark-text is fine on all of them, --dark-text and dark-background are fine as text on --accent */
+.theme-dark {
+  --color-primary: #124a63;
+  --color-subrimary: #b3c5cd;
+  --color-white: black;
+  --color-black: white;
+  --color-bg: #252329;
+}
+
+html {
+  font-size: 62.5%;
+}

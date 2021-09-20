@@ -1,0 +1,13 @@
+.create {
+  flex-direction: row !important;
+  justify-content: flex-end;
+  align-items: center;
+  background: white !important;
+  padding: 16px;
+  input {
+    margin-right: 8px;
+  }
+  &-left {
+    display: flex;
+  }
+}
