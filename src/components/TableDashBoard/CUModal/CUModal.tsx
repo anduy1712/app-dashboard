@@ -1,10 +1,8 @@
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Modal,
   Form,
   Input,
   Select,
-  DatePicker,
   Switch,
   Button,
   Tag,
@@ -12,71 +10,88 @@ import {
   message
 } from 'antd';
 import ImgCrop from 'antd-img-crop';
-import moment from 'moment';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { onPreview } from '../../../constants/imageUpload/preview';
 import {
+  AddUser,
   EditUser,
   User,
   userSelector
 } from '../../../store/reducers/userSlice';
+import { Props } from './CUModal.type';
 
-type EditDataType = {
-  open?: any;
-  toggleModal: boolean;
-  // data: User;
-}
-
-const EditData = ({ toggleModal, open }: EditDataType) => {
-  const { detail } = useSelector(userSelector);
+const CUModal = (props: Props) => {
+  const [fileList, setFileList] = useState<any>([
+    {
+      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'
+    }
+  ]);
+  //Store
   const dispatch = useDispatch();
-  // const [userModal, setUserModal] = useState<User>(data);
-  // setUserModal(data)
-  const [fileList, setFileList] = useState<any>([]);
+  const { user } = useSelector(userSelector);
+  const [form] = Form.useForm();
+  //Bind Data
+  const bindDataToForm = (id: any) => {
+    if (id) {
+      const data = user.filter((item: any) => item.id === id);
+      form.setFieldsValue(data[0]);
+      return data[0];
+    }
+    form.setFieldsValue({ name: '', email: '', username: '', phone: '' });
+    return { name: '', email: '', username: '', phone: '' };
+  };
   //Upload Image
-  const onChange = ({ fileList: newFileList }:any) => {
+  const onChange = ({ fileList: newFileList }: any) => {
     setFileList(newFileList);
   };
   //Form Submit
-  const onFinish = (values: User) => {
-    const formEdit = {
-      ...values,
-      id: detail.id,
-      photoImage: fileList[0].thumbUrl ? fileList[0].thumbUrl : ''
-    };
-    dispatch(EditUser(formEdit));
-    open();
+  const onSubmitForm = (values: User) => {
+    if (!fileList[0]?.thumbUrl)
+      return message.error('This is an error message');
+    if (props.mode === 'MODAL_EDIT') {
+      const formEdit = {
+        ...values,
+        id: 1,
+        photoImage: fileList[0].thumbUrl ? fileList[0].thumbUrl : ''
+      };
+      dispatch(EditUser(formEdit));
+    } else {
+      const formCreate = {
+        ...values,
+        id: 1,
+        photoImage: fileList[0].thumbUrl ? fileList[0].thumbUrl : ''
+      };
+      dispatch(AddUser(formCreate));
+    }
+    props.onClose();
   };
-  const submitForm: any = useRef(null);
-  const [form] = Form.useForm();
-
-  useEffect(() => {
-    form.setFieldsValue(detail);
-  }, [detail]);
-
   return (
     <Modal
-      title={detail.username}
+      title={props.mode === 'MODAL_EDIT' ? 'MODAL_EDIT' : 'MODAL_CREATE'}
       centered
-      visible={toggleModal}
+      visible={props.visible}
       footer={null}
       // onOk={closeModal}
-      onCancel={open}
+      onCancel={props.onClose}
     >
       <Form
         form={form}
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
-        initialValues={detail}
-        onFinish={onFinish}
+        initialValues={
+          props.dataId && props.mode === 'MODAL_EDIT'
+            ? bindDataToForm(props.dataId)
+            : bindDataToForm(props.dataId)
+        }
+        onFinish={onSubmitForm}
       >
         <ImgCrop rotate>
           <Upload
             action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
             listType="picture-card"
-            // fileList={fileList}
+            fileList={fileList}
             onChange={onChange}
             onPreview={onPreview}
           >
@@ -114,7 +129,7 @@ const EditData = ({ toggleModal, open }: EditDataType) => {
         <Form.Item name="status" label="Status:" valuePropName="checked">
           <Switch />
         </Form.Item>
-        <Button ref={submitForm} type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit">
           Submit
         </Button>
       </Form>
@@ -122,4 +137,4 @@ const EditData = ({ toggleModal, open }: EditDataType) => {
   );
 };
 
-export default EditData;
+export default CUModal;

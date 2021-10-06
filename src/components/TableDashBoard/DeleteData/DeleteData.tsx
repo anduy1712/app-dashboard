@@ -2,25 +2,25 @@ import { Modal } from 'antd';
 import { useDispatch } from 'react-redux';
 import { DeleteUser } from '../../../store/reducers/userSlice';
 interface CreateDataType {
-  open?: any;
-  toggleModal: boolean;
-  dataId?: number;
+  visible: boolean;
+  onClose: () => void;
+  dataId: number | null;
 }
 
-const DeleteData = ({ open, toggleModal, dataId }: CreateDataType) => {
+const DeleteData = ({ onClose, visible, dataId }: CreateDataType) => {
   const dispatch = useDispatch();
 
   const deleteItem = (dataId: number): void => {
     dispatch(DeleteUser(dataId));
-    open();
+    onClose();
   };
   return (
     <Modal
       title="Are you sure delete this task?"
       centered
-      visible={toggleModal}
+      visible={visible}
       onOk={() => deleteItem(dataId as number)}
-      onCancel={open}
+      onCancel={onClose}
       okType="danger"
     >
       <p>Are You Sure :D</p>
