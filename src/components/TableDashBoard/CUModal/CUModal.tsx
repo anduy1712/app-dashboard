@@ -33,11 +33,17 @@ const CUModal = (props: Props) => {
   const [form] = Form.useForm();
   //Bind Data
   const bindDataToForm = (id: any) => {
+    //Bind data Edit
     if (id) {
       const data = user.filter((item: any) => item.id === id);
-      form.setFieldsValue(data[0]);
+      const newData = data.map((item: any) => {
+        const getFullName = item.name.firstname + ' ' + item.name.lastname;
+        return { ...item, fullName: getFullName };
+      });
+      form.setFieldsValue(newData[0]);
       return data[0];
     }
+    //Bind data Create
     form.setFieldsValue({ name: '', email: '', username: '', phone: '' });
     return { name: '', email: '', username: '', phone: '' };
   };
@@ -49,6 +55,7 @@ const CUModal = (props: Props) => {
   const onSubmitForm = (values: User) => {
     if (!fileList[0]?.thumbUrl)
       return message.error('This is an error message');
+    //MODE Edit
     if (props.mode === 'MODAL_EDIT') {
       const formEdit = {
         ...values,
@@ -56,6 +63,7 @@ const CUModal = (props: Props) => {
         photoImage: fileList[0].thumbUrl ? fileList[0].thumbUrl : ''
       };
       dispatch(EditUser(formEdit));
+      //MODE Create
     } else {
       const formCreate = {
         ...values,
@@ -98,7 +106,7 @@ const CUModal = (props: Props) => {
             {fileList.length < 1 && '+ Upload'}
           </Upload>
         </ImgCrop>
-        <Form.Item name="name" label="Name:">
+        <Form.Item name="fullName" label="Full Name:">
           <Input />
         </Form.Item>
         <Form.Item name="username" label="Username:">
