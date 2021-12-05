@@ -20,7 +20,7 @@ const CreateData = () => {
   const toggleCreate = () => {
     setVisible(!visible);
   };
-  const onFinish = (values: any) => {
+  const onFinish = (values: object) => {
     const newUser = { ...values, id: uuidv4() };
     dispatch(AddUser(newUser));
     setVisible(!visible);

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 import {
   Row,
   Form,
@@ -10,13 +11,16 @@ import {
   Upload
 } from 'antd';
 import ImgCrop from 'antd-img-crop';
-import './ProductCreate.style.scss';
+import './ProductEdit.style.scss';
 import { onPreview } from '../../../constants/imageUpload/preview';
 import CardCustom from '../../../components/CardCustom/CardCustom';
-import { useDispatch } from 'react-redux';
-import { postProducts, Product } from '../../../store/reducers/productSlice';
-import { UploadChangeParam } from 'antd/lib/upload';
-import { UploadFile } from 'antd/lib/upload/interface';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getProduct,
+  productsSelector
+} from '../../../store/reducers/productSlice';
+// import { cloneDeep } from 'lodash';
+
 const { Option } = Select;
 
 const formItemLayout = {
@@ -30,23 +34,49 @@ const formItemLayout = {
   }
 };
 
-const ProductCreate = () => {
-  //State
-  const [fileList, setFileList] = useState<any>([]);
+type SlugProduct = {
+  slug: string;
+};
+
+const ProductEdit = () => {
+  const { products } = useSelector(productsSelector);
+  const [fileList, setFileList] = useState<any>([{ url: '' }]);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const onChange = ({ fileList: newFileList }: UploadChangeParam<UploadFile<any>>) => {
-    setFileList(newFileList);
-  };
+  console.log(products);
 
-  const onFinish = (values: Product) => {
+  const { slug = '1' }: SlugProduct = useParams();
+  const onFinish = (values: any) => {
     const newImg = fileList.map((item: any) => {
       return item.thumbUrl;
     });
     values.images = newImg;
-    dispatch(postProducts(values));
+    // dispatch(postProducts(values));
+    console.log(values);
   };
 
+  const onChange = ({ fileList: newFileList }: any) => {
+    setFileList(newFileList);
+  };
+  //Bind Data
+  const bindDataToForm = () => {
+    //Bind data Edit
+    form.setFieldsValue(products);
+
+    return products;
+  };
+  useEffect(() => {
+    dispatch(getProduct(slug));
+  }, [dispatch, slug]);
+  useEffect(() => {
+    if (products?.images) {
+      setFileList(
+        products.images.map((item: any) => {
+          return { url: item };
+        })
+      );
+    }
+  }, [products]);
   return (
     <>
       <Col span={16}>
@@ -57,10 +87,7 @@ const ProductCreate = () => {
             form={form}
             name="register"
             onFinish={onFinish}
-            initialValues={{
-              residence: ['zhejiang', 'hangzhou', 'xihu'],
-              prefix: '86'
-            }}
+            initialValues={products && bindDataToForm()}
             scrollToFirstError
           >
             <Form.Item
@@ -160,7 +187,7 @@ const ProductCreate = () => {
           </Form>
         </CardCustom>
         {/* <Layout className="product-create">
-      </Layout> */}
+  </Layout> */}
       </Col>
       <Col span={8}>
         <CardCustom title="Media">
@@ -181,4 +208,4 @@ const ProductCreate = () => {
   );
 };
 
-export default ProductCreate;
+export default ProductEdit;

@@ -1,10 +1,8 @@
 import { Layout, Menu } from 'antd';
 import { useEffect, useState } from 'react';
 import sidebar from './SideBar.module.scss';
-import { NavLink, Link } from 'react-router-dom';
-import { ROUTE } from '../../constants/routes';
-import { pageRoutes } from '../../routes/pageRoutes';
-import SidebarItem from './SidebarItem';
+import { NavLink } from 'react-router-dom';
+
 import { useLocation } from 'react-router-dom';
 import { sidebarRoutes } from '../../routes/sidebarRoutes';
 const { Sider } = Layout;
@@ -23,7 +21,7 @@ const SideBar = () => {
 
   useEffect(() => {
     setSelectedKey(pathname);
-  }, [location]);
+  }, [location, pathname]);
   return (
     <Sider
       breakpoint="lg"
@@ -43,7 +41,10 @@ const SideBar = () => {
             src="https://pixinvent.com/demo/vuexy-react-admin-dashboard-template/demo-2/static/media/logo.86b72fab.svg"
             alt=""
           />
-          <h2>DashBoard </h2>
+          <h2>DashBoard</h2>
+          <div className={sidebar.circle} onClick={onCollapse}>
+            <div className={collapse ? '' : sidebar.circleactive}></div>
+          </div>
         </div>
         {/* <Checkbox onChange={onChange}></Checkbox> */}
       </div>

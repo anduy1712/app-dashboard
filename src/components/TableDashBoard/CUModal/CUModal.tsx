@@ -10,7 +10,9 @@ import {
   message
 } from 'antd';
 import ImgCrop from 'antd-img-crop';
-import { useState } from 'react';
+import { UploadChangeParam } from 'antd/lib/upload';
+import { UploadFile } from 'antd/lib/upload/interface';
+import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { onPreview } from '../../../constants/imageUpload/preview';
 import {
@@ -31,11 +33,12 @@ const CUModal = (props: Props) => {
   const dispatch = useDispatch();
   const { user } = useSelector(userSelector);
   const [form] = Form.useForm();
+  const formEl = useRef(null);
   //Bind Data
-  const bindDataToForm = (id: any) => {
+  const bindDataToForm = (id: number | null) => {
     //Bind data Edit
     if (id) {
-      const data = user.filter((item: any) => item.id === id);
+      const data = user.filter((item: User): boolean => item.id === id);
       const newData = data.map((item: any) => {
         const getFullName = item.name.firstname + ' ' + item.name.lastname;
         return { ...item, fullName: getFullName };
@@ -48,7 +51,9 @@ const CUModal = (props: Props) => {
     return { name: '', email: '', username: '', phone: '' };
   };
   //Upload Image
-  const onChange = ({ fileList: newFileList }: any) => {
+  const onChange = ({
+    fileList: newFileList
+  }: UploadChangeParam<UploadFile<any>>) => {
     setFileList(newFileList);
   };
   //Form Submit
@@ -74,6 +79,8 @@ const CUModal = (props: Props) => {
     }
     props.onClose();
   };
+
+
   return (
     <Modal
       title={props.mode === 'MODAL_EDIT' ? 'MODAL_EDIT' : 'MODAL_CREATE'}
@@ -82,9 +89,12 @@ const CUModal = (props: Props) => {
       footer={null}
       // onOk={closeModal}
       onCancel={props.onClose}
+      getContainer={false}
+      forceRender
     >
       <Form
         form={form}
+        ref={formEl}
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"

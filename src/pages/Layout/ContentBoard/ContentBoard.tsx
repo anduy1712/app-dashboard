@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { Layout } from 'antd';
 import { Row } from 'antd';
-import { Switch, Route, Link } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import content from './Content.module.scss';
 import { pageRoutes } from '../../../routes/pageRoutes';
 const { Footer, Content } = Layout;
