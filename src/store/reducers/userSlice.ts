@@ -1,6 +1,5 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axios from 'axios';
-import { Moment } from 'moment';
 
 export interface User {
   id?: number;
@@ -18,14 +17,14 @@ export interface User {
 interface CounterState {
   user: Array<User>;
   userRoot: Array<User>;
-  detail: User;
+  detail: User[];
 }
 
 // Define the initial state using that type
 const initialState: CounterState = {
   user: [],
   userRoot: [],
-  detail: {}
+  detail: [{}]
 };
 export const getUser = createAsyncThunk('user/getUser', async () => {
   const response = await axios.get(
@@ -49,6 +48,9 @@ export const userSlice = createSlice({
     },
     AddDetail: (state, action) => {
       state.detail = action.payload;
+    },
+    FetchDetail: (state, action) => {
+      state.detail = state.user.filter((item) => item.id === action.payload);
     },
     EditUser: (state, action) => {
       const { id } = action.payload;
@@ -77,9 +79,11 @@ export const userSlice = createSlice({
   }
 });
 export const userSelector = (state: any) => state.user;
+
 //action
 export const {
   FetchUser,
+  FetchDetail,
   AddDetail,
   DeleteUser,
   AddUser,

@@ -20,7 +20,7 @@ const CreateData = () => {
   const toggleCreate = () => {
     setVisible(!visible);
   };
-  const onFinish = (values: any) => {
+  const onFinish = (values: object) => {
     const newUser = { ...values, id: uuidv4() };
     dispatch(AddUser(newUser));
     setVisible(!visible);
@@ -35,50 +35,7 @@ const CreateData = () => {
         <Button onClick={toggleCreate} type="primary">
           Add New User
         </Button>
-        <Modal
-          title="Edit Data"
-          centered
-          visible={visible}
-          footer={null}
-          // onOk={closeModal}
-          onCancel={toggleCreate}
-        >
-          <Form
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 14 }}
-            layout="horizontal"
-            initialValues={newUser}
-            onFinish={onFinish}
-          >
-            <Form.Item name="name" label="Name:">
-              <Input />
-            </Form.Item>
-            <Form.Item name="username" label="Username:">
-              <Input />
-            </Form.Item>
-            <Form.Item name="email" label="Email:">
-              <Input />
-            </Form.Item>
-            <Form.Item name="phone" label="Phone:">
-              <Input />
-            </Form.Item>
-            <Form.Item name="gender" label="Gender">
-              <Select>
-                <Select.Option value="male">Male</Select.Option>
-                <Select.Option value="female">Female</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item name="birthday" label="Birthday:">
-              <DatePicker />
-            </Form.Item>
-            <Form.Item name="status" label="Status:" valuePropName="checked">
-              <Switch />
-            </Form.Item>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form>
-        </Modal>
+       
       </div>
     </Layout>
   );

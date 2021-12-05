@@ -1,26 +1,27 @@
 import { Layout, Menu } from 'antd';
-import { useState } from 'react';
-import {
-  DesktopOutlined,
-  PieChartOutlined,
-  FileOutlined,
-  TeamOutlined,
-  UserOutlined
-} from '@ant-design/icons';
+import { useEffect, useState } from 'react';
 import sidebar from './SideBar.module.scss';
-import { Link } from 'react-router-dom';
-import { ROUTE } from '../../constants/routes';
+import { NavLink } from 'react-router-dom';
+
+import { useLocation } from 'react-router-dom';
+import { sidebarRoutes } from '../../routes/sidebarRoutes';
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
 const SideBar = () => {
+  const location = useLocation();
+  const { pathname } = location;
   //state
   const [collapse, setCollapse] = useState(false);
+  const [selectedKey, setSelectedKey] = useState(pathname);
 
   const onCollapse = () => {
     setCollapse(!collapse);
   };
 
+  useEffect(() => {
+    setSelectedKey(pathname);
+  }, [location, pathname]);
   return (
     <Sider
       breakpoint="lg"
@@ -40,34 +41,42 @@ const SideBar = () => {
             src="https://pixinvent.com/demo/vuexy-react-admin-dashboard-template/demo-2/static/media/logo.86b72fab.svg"
             alt=""
           />
-          <h2>DashBoard </h2>
+          <h2>DashBoard</h2>
+          <div className={sidebar.circle} onClick={onCollapse}>
+            <div className={collapse ? '' : sidebar.circleactive}></div>
+          </div>
         </div>
         {/* <Checkbox onChange={onChange}></Checkbox> */}
       </div>
-      <Menu theme="light" defaultSelectedKeys={['1']} mode="inline">
-        <Menu.Item key="1" icon={<PieChartOutlined />}>
-          DashBoards
-        </Menu.Item>
-        <Menu.Item key="2" icon={<DesktopOutlined />}>
-          Calender
-        </Menu.Item>
-        <SubMenu key="sub1" icon={<UserOutlined />} title="User">
-          <Menu.Item key="3">
-            <Link to={ROUTE.USER.BASE}>List</Link>
-          </Menu.Item>
-          <Menu.Item key="4">Edit</Menu.Item>
-          <Menu.Item key="5">View</Menu.Item>
-        </SubMenu>
-        <SubMenu key="sub2" icon={<TeamOutlined />} title="Product">
-          <Menu.Item key="6">
-            <Link to={ROUTE.PRODUCT.BASE}>List</Link>
-          </Menu.Item>
-          <Menu.Item key="7">Edit</Menu.Item>
-          <Menu.Item key="8">View</Menu.Item>
-        </SubMenu>
-        <Menu.Item key="9" icon={<FileOutlined />}>
-          Files
-        </Menu.Item>
+      <Menu selectedKeys={[selectedKey]} theme="light" mode="inline">
+        {sidebarRoutes.map((item, index) => {
+          return (
+            <>
+              {/* <Menu.Item key={String(item.path)} icon={item.icon}>
+                <NavLink to={String(item.path)}>{item.title}</NavLink>
+              </Menu.Item> */}
+              {item?.children ? (
+                <SubMenu
+                  key={String(item.path)}
+                  title={item.title}
+                  icon={item.icon}
+                >
+                  {item.children.map((item, index) => {
+                    return (
+                      <Menu.Item key={String(item.path)}>
+                        <NavLink to={String(item.path)}>{item.title}</NavLink>
+                      </Menu.Item>
+                    );
+                  })}
+                </SubMenu>
+              ) : (
+                <Menu.Item key={String(item.path)} icon={item.icon}>
+                  <NavLink to={String(item.path)}>{item.title}</NavLink>
+                </Menu.Item>
+              )}
+            </>
+          );
+        })}
       </Menu>
     </Sider>
   );
