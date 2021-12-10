@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Row,
   Form,
@@ -17,7 +17,7 @@ import { useDispatch } from 'react-redux';
 import { postProducts, Product } from '../../../store/reducers/productSlice';
 import { UploadChangeParam } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
-const { Option } = Select;
+import useLocations from '../../../constants/hooks/useLocations';
 
 const formItemLayout = {
   labelCol: {
@@ -31,11 +31,24 @@ const formItemLayout = {
 };
 
 const ProductCreate = () => {
+  const [state, setSelectedCity, setSelectedDistrict, setSelectedWard] =
+    useLocations();
+  const {
+    cityOptions,
+    districtOptions,
+    wardOptions,
+    selectedCity,
+    selectedDistrict,
+    selectedWard
+  } = state;
+  console.log(state);
   //State
   const [fileList, setFileList] = useState<any>([]);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const onChange = ({ fileList: newFileList }: UploadChangeParam<UploadFile<any>>) => {
+  const onChange = ({
+    fileList: newFileList
+  }: UploadChangeParam<UploadFile<any>>) => {
     setFileList(newFileList);
   };
 
@@ -46,7 +59,13 @@ const ProductCreate = () => {
     values.images = newImg;
     dispatch(postProducts(values));
   };
-
+  useEffect(() => {
+    form.setFieldsValue({
+      cityId: selectedCity,
+      districtId: selectedDistrict,
+      wardId: selectedWard
+    });
+  }, [form, selectedCity, selectedDistrict, selectedWard]);
   return (
     <>
       <Col span={16}>
@@ -59,7 +78,9 @@ const ProductCreate = () => {
             onFinish={onFinish}
             initialValues={{
               residence: ['zhejiang', 'hangzhou', 'xihu'],
-              prefix: '86'
+              prefix: '86',
+              cityId: selectedCity,
+              districtId: selectedDistrict
             }}
             scrollToFirstError
           >
@@ -119,24 +140,37 @@ const ProductCreate = () => {
                 </Form.Item>
               </Col>
             </Row>
-
-            <Form.Item
-              name="categoryId"
-              label="Category"
-              rules={[{ required: true, message: 'Please select category!' }]}
-            >
-              <Select placeholder="Select your category">
-                <Option value="a1f1d2a2-ed6b-48ae-a31e-018efe7b6180">
-                  Jacket
-                </Option>
-                <Option value="a1f1d2a2-ed6b-48ae-a31e-018efe7b6181">
-                  Coat
-                </Option>
-                <Option value="a1f1d2a2-ed6b-48ae-a31e-018efe7b6182">
-                  Dress
-                </Option>
-              </Select>
-            </Form.Item>
+            <Row gutter={24}>
+              <Col span={8}>
+                <Form.Item name="cityId" label="city">
+                  <Select
+                    options={cityOptions}
+                    placeholder="Select your city"
+                    onChange={(value) => setSelectedCity(value)}
+                  ></Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item name="districtId" label="district">
+                  <Select
+                    disabled={districtOptions.length === 0}
+                    options={districtOptions}
+                    onChange={(value) => setSelectedDistrict(value)}
+                    placeholder="Select your district"
+                  ></Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item name="wardId" label="ward">
+                  <Select
+                    disabled={wardOptions.length === 0}
+                    options={wardOptions}
+                    onChange={(value) => setSelectedWard(value)}
+                    placeholder="Select your ward"
+                  ></Select>
+                </Form.Item>
+              </Col>
+            </Row>
 
             <Form.Item
               name="description"
